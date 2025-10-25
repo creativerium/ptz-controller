@@ -1,0 +1,118 @@
+# .github/project.yml
+# GitHub Projects v2 configuration for your Android Dev Center
+
+name: Android Dev Center Roadmap
+description: >
+  Centralized development backlog for Android team —
+  covering Clean Architecture, Security, Modularization, and CI/CD.
+
+# 🗂️ Columns for the project board
+columns:
+  - name: 📝 Backlog
+  - name: 🚧 In Progress
+  - name: 🧪 In Review
+  - name: ✅ Done
+
+# 🏷️ Default labels
+labels:
+  - name: architecture
+    color: "#6f42c1"
+    description: Clean Architecture and refactor tasks
+  - name: security
+    color: "#d73a4a"
+    description: Security, encryption, and obfuscation improvements
+  - name: feature-module
+    color: "#0366d6"
+    description: Modularization of app features
+  - name: ci-cd
+    color: "#0e8a16"
+    description: CI/CD automation and workflows
+  - name: documentation
+    color: "#7057ff"
+    description: Team wiki and documentation
+  - name: enhancement
+    color: "#a2eeef"
+    description: Feature improvements
+  - name: bug
+    color: "#d73a4a"
+    description: Bug fixes and regressions
+  - name: discussion
+    color: "#fbca04"
+    description: Team discussion or decision items
+
+# 🎯 Milestones
+milestones:
+  - title: Clean Architecture Refactor
+    description: Separate layers and enforce domain boundaries
+    due_on: 2025-11-30
+  - title: App Security Enhancements
+    description: Strengthen obfuscation, encryption, and network security
+    due_on: 2025-12-15
+  - title: Feature Modulation
+    description: Split 6 main menus into feature modules
+    due_on: 2026-01-10
+  - title: CI/CD Pipeline
+    description: Automate build, test, and delivery
+    due_on: 2026-01-25
+  - title: Documentation & Team Workflow
+    description: Build internal wiki and contributor guides
+    due_on: 2026-02-01
+
+# 🧱 Default issues (Epics)
+issues:
+  - title: "Define Architecture Blueprint"
+    labels: [architecture]
+    milestone: Clean Architecture Refactor
+    body: |
+      - [ ] Document domain, data, and presentation layer boundaries
+      - [ ] Create README diagram
+      - [ ] Setup base packages under `com.example.app`
+  - title: "Secure Local Data Storage"
+    labels: [security]
+    milestone: App Security Enhancements
+    body: |
+      - [ ] Implement EncryptedSharedPreferences
+      - [ ] Encrypt Room database using SQLCipher
+      - [ ] Audit plain-text data usage
+  - title: "Implement Certificate Pinning"
+    labels: [security]
+    milestone: App Security Enhancements
+    body: |
+      - [ ] Add OkHttp CertificatePinner
+      - [ ] Configure network_security_config.xml
+      - [ ] Handle expired cert scenario gracefully
+  - title: "Feature Module Setup"
+    labels: [feature-module]
+    milestone: Feature Modulation
+    body: |
+      - [ ] Create core modules: core-ui, core-network, core-database
+      - [ ] Split main menus into feature modules
+      - [ ] Implement navigation via core-navigation
+  - title: "Setup CI with GitHub Actions"
+    labels: [ci-cd]
+    milestone: CI/CD Pipeline
+    body: |
+      - [ ] Run tests, lint, and assembleDebug on PR
+      - [ ] Upload build artifacts
+      - [ ] Add CI status badge to README
+  - title: "Setup CD for Release Builds"
+    labels: [ci-cd]
+    milestone: CI/CD Pipeline
+    body: |
+      - [ ] Trigger on tag push
+      - [ ] Sign and upload release AAB to Play Console or Firebase
+      - [ ] Automate version naming via git tags
+  - title: "Developer Wiki Setup"
+    labels: [documentation]
+    milestone: Documentation & Team Workflow
+    body: |
+      - [ ] Add project setup and architecture docs
+      - [ ] Add branching strategy and commit convention
+      - [ ] Link docs to GitHub Wiki
+  - title: "Project Board Setup"
+    labels: [documentation]
+    milestone: Documentation & Team Workflow
+    body: |
+      - [ ] Create columns for Backlog → In Progress → Review → Done
+      - [ ] Use labels for categorization
+      - [ ] Link issues automatically to milestones
