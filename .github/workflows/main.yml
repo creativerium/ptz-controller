@@ -65,12 +65,11 @@ jobs:
             fi
 
           elif [ "${{ github.event_name }}" = "delete" ]; then
-            if grep -q "\* \*\*${BRANCH_NAME}\*\*" "$WIKI_FILE"; then
-              sed -i "/\* \*\*${BRANCH_NAME}\*\*/d" "$WIKI_FILE"
+            if grep -q "\\* \\*\\*${BRANCH_NAME}\\*\\*" "$WIKI_FILE"; then
+              sed -i "\|\\* \\*\\*${BRANCH_NAME}\\*\\*|d" "$WIKI_FILE"
               echo "🗑️ Removed: $BRANCH_NAME"
             else
               echo "⚠️ Not found: $BRANCH_NAME"
-            fi
           fi
 
       - name: 📤 Commit and Push Changes
