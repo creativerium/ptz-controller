@@ -31,7 +31,7 @@ jobs:
           BRANCH_NAME: ${{ github.ref_name }}  # ← This is clean: "main-dev-feat"
         run: |
           WIKI_DIR="wiki_repo"
-          WIKI_FILE="$WIKI_DIR/Active-Branch.md"
+          WIKI_FILE="$WIKI_DIR/🌿Active-Branch.md"
           mkdir -p "$WIKI_DIR"
 
           # Initialize file if missing
