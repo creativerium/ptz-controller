@@ -28,40 +28,41 @@ jobs:
 
       - name: 📝 Handle Branch Event
         env:
-          BRANCH_NAME: ${{ github.event.ref }}
+          BRANCH_NAME: ${{ github.ref_name }}  # ← This is clean: "main-dev-feat"
         run: |
           WIKI_DIR="wiki_repo"
           WIKI_FILE="$WIKI_DIR/Active-Branch.md"
           mkdir -p "$WIKI_DIR"
 
+          # Initialize file if missing
           if [ ! -f "$WIKI_FILE" ]; then
             echo "## Active Development Branches" > "$WIKI_FILE"
             echo "" >> "$WIKI_FILE"
           fi
 
           if [ "${{ github.event_name }}" = "push" ]; then
-            # ADD branch
+            # ADD branch (only if not already present)
             if grep -q "\* \*\*${BRANCH_NAME}\*\*" "$WIKI_FILE"; then
-              echo "Branch already exists. Skipping add."
+              echo "Branch '$BRANCH_NAME' already exists in wiki."
             else
               TIMESTAMP="${{ github.event.head_commit.timestamp }}"
               NEW_ENTRY="* **${BRANCH_NAME}** (Latest push at ${TIMESTAMP:-$(date -u +%Y-%m-%dT%H:%M:%SZ)})"
               {
-                head -n 2 "$WIKI_FILE"  # Keep header + blank line
+                head -n 2 "$WIKI_FILE"
                 echo "$NEW_ENTRY"
                 sed '1,2d' "$WIKI_FILE"
               } > "${WIKI_FILE}.tmp"
               mv "${WIKI_FILE}.tmp" "$WIKI_FILE"
-              echo "Added branch: $BRANCH_NAME"
+              echo "✅ Added branch: $BRANCH_NAME"
             fi
 
           elif [ "${{ github.event_name }}" = "delete" ]; then
             # REMOVE branch
             if grep -q "\* \*\*${BRANCH_NAME}\*\*" "$WIKI_FILE"; then
               sed -i "/\* \*\*${BRANCH_NAME}\*\*/d" "$WIKI_FILE"
-              echo "Removed branch: $BRANCH_NAME"
+              echo "🗑️ Removed branch: $BRANCH_NAME"
             else
-              echo "Branch not found in wiki. Nothing to remove."
+              echo "⚠️ Branch '$BRANCH_NAME' not found in wiki. Skipping removal."
             fi
           fi
 
