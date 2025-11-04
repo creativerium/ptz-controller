@@ -70,7 +70,8 @@ jobs:
               echo "🗑️ Removed: $BRANCH_NAME"
             else
               echo "⚠️ Not found: $BRANCH_NAME"
-          fi
+            fi
+          fi  
 
       - name: 📤 Commit and Push Changes
         if: always()  # Optional: run even if previous step failed
