@@ -51,16 +51,13 @@ jobs:
           fi
 
           if [ "${{ github.event_name }}" = "push" ]; then
-            # Remove any existing entry for this branch (prevents duplicates + promotes to top)
             sed -i "\|\\* \\*\\*${BRANCH_NAME}\\*\\*|d" "$WIKI_FILE"
-
-            # Add to top (after header)
             TIMESTAMP="${{ github.event.head_commit.timestamp }}"
             NEW_ENTRY="* **${BRANCH_NAME}** (Latest push at ${TIMESTAMP:-$(date -u +%Y-%m-%dT%H:%M:%SZ)})"
-            {
-              head -n 2 "$WIKI_FILE"
-              echo "$NEW_ENTRY"
-              sed '1,2d' "$WIKI_FILE"
+            { 
+            head -n 2 "$WIKI_FILE"
+            echo "$NEW_ENTRY"
+            sed '1,2d' "$WIKI_FILE"
             } > "${WIKI_FILE}.tmp"
             mv "${WIKI_FILE}.tmp" "$WIKI_FILE"
             echo "✅ Promoted: $BRANCH_NAME"
