@@ -2,7 +2,7 @@
 # GitHub Projects v2 configuration for your Android Dev Center
 
 name: Android Dev Center Roadmap
-description: >
+description:
   Centralized development backlog for Android team —
   covering Clean Architecture, Security, Modularization, and CI/CD.
 
