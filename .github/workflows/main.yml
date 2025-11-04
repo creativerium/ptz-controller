@@ -1,0 +1,83 @@
+name: 🔄 Update Active Branch Wiki
+
+# Trigger on a push event, but only to branches (not tags)
+# and only when the branch is NOT the default branch (e.g., main)
+on:
+  push:
+    branches:
+      # Exclude the default branch so it only triggers for new/feature branches
+      # Adjust 'main' to 'master' if your default branch is master
+      - '*'
+      - '!main'
+    tags-ignore:
+      - '*'
+
+# IMPORTANT: You need 'contents: write' permission to push to the wiki repository.
+permissions:
+  contents: write
+
+jobs:
+  update_wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Get Branch Name
+        id: branch_name
+        run: echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+
+      - name: 🌐 Clone Wiki Repository
+        # The wiki is cloned as a separate repository named <repo>.wiki.git
+        run: |
+          git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git" wiki_repo
+        # We clone the wiki repo to a local folder named 'wiki_repo'
+
+      - name: 📝 Update Wiki Page Content
+        id: update_content
+        run: |
+          WIKI_FILE="wiki_repo/Active Branch.md"
+          BRANCH_NAME="${{ steps.branch_name.outputs.branch }}"
+          WIKI_HEADER="## Active Development Branches"
+          
+          # 1. Ensure the directory and file exist (needed for the very first run)
+          mkdir -p wiki_repo
+          if [ ! -f "$WIKI_FILE" ]; then
+            echo "$WIKI_HEADER" > "$WIKI_FILE"
+            echo "* ${{ github.ref_name }} (First push)" >> "$WIKI_FILE"
+            echo "::set-output name=has_new_branch::true" >> $GITHUB_OUTPUT
+            exit 0 # Done with the first run
+          fi
+
+          # 2. Get existing content
+          OLD_CONTENT=$(cat "$WIKI_FILE")
+
+          # 3. Check if the branch is already in the list to avoid duplicates
+          if grep -q "\* ${BRANCH_NAME}" "$WIKI_FILE"; then
+            echo "Branch '$BRANCH_NAME' is already listed. No update needed."
+            echo "::set-output name=has_new_branch::false" >> $GITHUB_OUTPUT
+          else
+            # 4. Append the new branch name to the list
+            # Append it after the header but before any existing list items
+            # This is a simplified way; for complex sorting/replacement, you'd use a script
+            echo "$WIKI_HEADER" > TEMP_FILE
+            echo "* **${BRANCH_NAME}** (Latest push at ${{ github.event.head_commit.timestamp }})" >> TEMP_FILE
+            echo "" >> TEMP_FILE
+            # Append the rest of the old content, skipping the old header
+            tail -n +2 "$WIKI_FILE" >> TEMP_FILE
+            mv TEMP_FILE "$WIKI_FILE"
+
+            echo "Wiki content updated with new branch: $BRANCH_NAME"
+            echo "::set-output name=has_new_branch::true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📤 Commit and Push to Wiki
+        if: steps.update_content.outputs.has_new_branch == 'true'
+        run: |
+          cd wiki_repo
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add .
+          git commit -m "Auto-update: Added branch ${{ steps.branch_name.outputs.branch }} to Active Branch list"
+          # Push using the GITHUB_TOKEN
+          git push
